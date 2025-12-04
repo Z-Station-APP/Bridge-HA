@@ -14,7 +14,7 @@ Elle génère des JSON structurés pour des requêtes API par Z-Station.
 
 1. Aller dans **HACS → Integrations**
 2. Cliquer sur **⋮ → Custom repositories**
-3. Ajouter l’URL du dépôt :
-
+3. Ajouter l’URL du dépôt : 
+https://github.com/Z-Station-APP/Bridge-HA.git
 
 
