@@ -28,8 +28,6 @@ class ZStationZonesView(HomeAssistantView):
             }
             for area in area_reg.areas.values()
         ]
-
-        # Optional but useful: tri alphabétique pour stabilité de l’API
         zones.sort(key=lambda z: z["name"].lower())
 
         return self.json(zones)
