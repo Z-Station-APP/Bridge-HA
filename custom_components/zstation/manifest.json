@@ -1,9 +1,9 @@
 {
-    "domain": "bridge-ha",
+    "domain": "zstation",
     "name": "Z-Station Bridge",
     "version": "1.0.0",
-    "documentation": "https://example.com",
-    "issue_tracker": "https://example.com/issues",
+    "documentation": "https://github.com/Z-Station-APP/Bridge-HA",
+    "issue_tracker": "https://github.com/Z-Station-APP/Bridge-HA/issues",
     "requirements": [],
     "codeowners": ["@Z-Station-APP"],
     "integration_type": "hub",
@@ -11,3 +11,4 @@
     "supported_brands": ["zstation"],
     "min_homeassistant_version": "2024.1.0"
 }
+
