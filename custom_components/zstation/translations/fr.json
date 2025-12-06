@@ -1,0 +1,16 @@
+{
+  "title": "Passerelle Z-Station",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Configurer la passerelle Z-Station",
+        "description": "Saisissez les informations n\u00e9cessaires pour connecter votre syst\u00e8me Z-Station."
+      }
+    },
+    "error": {
+      "cannot_connect": "Impossible de se connecter \u00e0 Z-Station.",
+      "invalid_auth": "Authentification invalide.",
+      "unknown": "Erreur inattendue."
+    }
+  }
+}

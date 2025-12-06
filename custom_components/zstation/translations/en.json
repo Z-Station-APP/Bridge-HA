@@ -1,0 +1,16 @@
+{
+  "title": "Z-Station Bridge",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Configure Z-Station Bridge",
+        "description": "Enter the information required to connect to your Z-Station system."
+      }
+    },
+    "error": {
+      "cannot_connect": "Unable to connect to Z-Station.",
+      "invalid_auth": "Invalid authentication.",
+      "unknown": "Unexpected error."
+    }
+  }
+}
