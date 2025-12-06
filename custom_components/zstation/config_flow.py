@@ -1,5 +1,6 @@
 from homeassistant import config_entries
-from homeassistant.core import HomeAssistant
+import voluptuous as vol
+
 from .const import DOMAIN
 
 
@@ -9,14 +10,21 @@ class ZStationConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     VERSION = 1
 
     async def async_step_user(self, user_input=None):
-        """Initial step of the configuration."""
-        if user_input is None:
-            # Display the empty configuration form
-            return self.async_show_form(step_id="user")
+        """Handle the initial step."""
+        errors = {}
 
-        # Create the entry with no configuration data
+        # First time: show form
+        if user_input is None:
+            return self.async_show_form(
+                step_id="user",
+                data_schema=vol.Schema({}),  # REQUIRED for UI
+                errors=errors
+            )
+
+        # When the user submits the form
         return self.async_create_entry(
             title="Z-Station Bridge",
-            data={}
+            data=user_input
         )
+
 
