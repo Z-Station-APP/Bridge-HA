@@ -4,9 +4,6 @@
   "render_readme": true,
   "domains": [
     "zstation"
-  ],
-  "iot_class": "local_push",
-  "filename": "zstation.zip",
-  "id": "zstation_bridge",
-  "category": "integration"
+  ]
 }
+
