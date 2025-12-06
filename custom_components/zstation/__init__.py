@@ -5,7 +5,7 @@ from homeassistant.exceptions import ConfigEntryNotReady
 
 from .const import DOMAIN
 from .zones_api import ZStationZonesView
-from .get_devices_api import ZStationDevicesView
+from .devices_api import ZStationDevicesView          # ✔ CORRIGÉ
 from .refresh_devices_api import ZStationRefreshDevicesView
 from .execute_action_api import ZStationExecuteActionView
 
@@ -58,5 +58,6 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
     hass.data[DOMAIN].pop(entry.entry_id, None)
     _LOGGER.debug("Z-Station Bridge entry unloaded")
     return True
+
 
 
