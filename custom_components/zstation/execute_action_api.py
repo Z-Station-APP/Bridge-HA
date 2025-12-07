@@ -4,7 +4,6 @@ import logging
 
 _LOGGER = logging.getLogger(__name__)
 
-
 class ZStationExecuteActionView(HomeAssistantView):
     """Handle execution of HA services through Z-Station Bridge."""
 
@@ -73,5 +72,9 @@ class ZStationExecuteActionView(HomeAssistantView):
                 "status": "ok",
                 "executed": {
                     "domain": domain,
-                    "se
+                    "service": service,
+                    "entity_id": entity_id,
+                }
+            }
+        )
 
