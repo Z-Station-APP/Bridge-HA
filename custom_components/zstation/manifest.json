@@ -1,14 +1,15 @@
 {
-    "domain": "zstation",
-    "name": "Z-Station Bridge",
-    "version": "1.0.0",
-    "documentation": "https://github.com/Z-Station-APP/Bridge-HA",
-    "issue_tracker": "https://github.com/Z-Station-APP/Bridge-HA/issues",
-    "requirements": [],
-    "codeowners": ["@Z-Station-APP"],
-    "integration_type": "hub",
-    "iot_class": "local_push",
-    "supported_brands": ["zstation"],
-    "min_homeassistant_version": "2024.1.0"
+  "domain": "zstation",
+  "name": "Z-Station Bridge",
+  "documentation": "https://github.com/Z-Station-APP/Bridge-HA",
+  "issue_tracker": "https://github.com/Z-Station-APP/Bridge-HA/issues",
+  "requirements": [],
+  "dependencies": [],
+  "codeowners": ["@Z-Station-APP"],
+  "integration_type": "hub",
+  "iot_class": "local_push",
+  "version": "1.0.0",
+  "config_flow": true
 }
+
 
