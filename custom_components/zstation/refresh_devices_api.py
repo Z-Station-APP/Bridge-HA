@@ -39,8 +39,6 @@ class ZStationRefreshDevicesView(HomeAssistantView):
 
     async def get(self, request):
         hass = self.hass
-
-        # Optimized registry access
         ent_reg = get_entity_registry(hass)
         dev_reg = get_device_registry(hass)
         area_reg = hass.helpers.area_registry.async_get_registry()
@@ -57,8 +55,6 @@ class ZStationRefreshDevicesView(HomeAssistantView):
 
             attributes = state.attributes
             action_values = extract_action_values(domain, attributes)
-
-            # Zone + area info
             zone_name = None
             zone_id = None
 
@@ -68,8 +64,6 @@ class ZStationRefreshDevicesView(HomeAssistantView):
                 if area:
                     zone_name = area.name
                     zone_id = name_to_ascii_numeric(area.name)
-
-            # Final response object
             result[domain].append({
                 "entity_id": entity_id,
                 "domain": domain,
