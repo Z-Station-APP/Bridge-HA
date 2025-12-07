@@ -4,9 +4,6 @@ from homeassistant.helpers.device_registry import async_get as get_device_regist
 
 def name_to_ascii_numeric(name: str) -> int:
     return int("".join(str(ord(c)) for c in name))
-
-
-# Mapping compact des attributs actionnables par domaine
 ACTIONABLE_MAP = {
     "light": ["brightness", "color_temp", "hs_color", "rgb_color", "xy_color"],
     "cover": ["current_position", "position", "tilt_position"],
@@ -43,8 +40,6 @@ class ZStationDevicesView(HomeAssistantView):
 
     async def get(self, request):
         hass = self.hass
-
-        # Registries → récupérés une seule fois
         ent_reg = get_entity_registry(hass)
         dev_reg = get_device_registry(hass)
         area_reg = hass.helpers.area_registry.async_get_registry()
@@ -54,11 +49,7 @@ class ZStationDevicesView(HomeAssistantView):
         for entity_id, entity_entry in ent_reg.entities.items():
             domain = entity_id.split(".")[0]
             state = hass.states.get(entity_id)
-
-            # Initialise la liste du domaine
             result.setdefault(domain, [])
-
-            # Sécurité si l'état n'existe plus
             if not state:
                 name = entity_entry.original_name
                 attributes = {}
@@ -72,8 +63,6 @@ class ZStationDevicesView(HomeAssistantView):
                 extract_action_values(domain, attributes)
                 if domain in ACTIONABLE_DOMAINS else None
             )
-
-            # Récupération device + zone
             device = dev_reg.devices.get(entity_entry.device_id)
             device_info = None
             zone_name = None
@@ -96,8 +85,6 @@ class ZStationDevicesView(HomeAssistantView):
                     if area:
                         zone_name = area.name
                         zone_id = name_to_ascii_numeric(area.name)
-
-            # Construction finale
             result[domain].append({
                 "id": entity_id,
                 "domain": domain,
