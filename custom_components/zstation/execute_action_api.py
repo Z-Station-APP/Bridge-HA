@@ -24,15 +24,11 @@ class ZStationExecuteActionView(HomeAssistantView):
         entity_id = body.get("entity_id")
         service = body.get("service")
         data = body.get("data", {})
-
-        # Validate required fields
         if not entity_id or not service:
             return self.json(
                 {"error": "Fields 'entity_id' and 'service' are required"},
                 status=400,
             )
-
-        # Validate entity ID structure
         if "." not in entity_id:
             return self.json(
                 {"error": "Invalid entity_id format. Expected 'domain.object'"},
@@ -40,15 +36,11 @@ class ZStationExecuteActionView(HomeAssistantView):
             )
 
         domain = entity_id.split(".")[0]
-
-        # Payload building
         payload = {"entity_id": entity_id}
         if isinstance(data, dict):
             payload.update(data)
         else:
             return self.json({"error": "'data' must be an object"}, status=400)
-
-        # Execute the service call safely
         try:
             await self.hass.services.async_call(
                 domain, service, payload, blocking=True
@@ -65,8 +57,6 @@ class ZStationExecuteActionView(HomeAssistantView):
                 {"error": "Unexpected internal error", "details": str(err)},
                 status=500,
             )
-
-        # Success response
         return self.json(
             {
                 "status": "ok",
