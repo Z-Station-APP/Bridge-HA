@@ -11,13 +11,11 @@ async def async_setup(hass: HomeAssistant, config: dict):
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     """Set up Z-Station from a config entry."""
-    # Initialisation de l'intégration
     hass.data.setdefault(DOMAIN, {})
     return True
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
     """Unload a config entry."""
-    # Nettoyage lors de la désactivation
     return True
 
 
