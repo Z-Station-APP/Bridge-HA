@@ -1,12 +1,11 @@
-from homeassistant.components.http import HomeAssistantView
-from homeassistant.exceptions import HomeAssistantError
 import logging
+from homeassistant.components.http import HomeAssistantView
+from homeassistant.core import ServiceCall
+import json
 
 _LOGGER = logging.getLogger(__name__)
 
 class ZStationExecuteActionView(HomeAssistantView):
-    """Handle execution of HA services through Z-Station Bridge."""
-
     url = "/api/zstation/execute_action"
     name = "api:zstation:execute_action"
     requires_auth = True
@@ -15,56 +14,27 @@ class ZStationExecuteActionView(HomeAssistantView):
         self.hass = hass
 
     async def post(self, request):
-        """Execute a Home Assistant service call."""
+        _LOGGER.info("Receiving request to /api/zstation/execute_action")
         try:
-            body = await request.json()
-        except Exception:
-            return self.json({"error": "Invalid JSON body"}, status=400)
+            data = await request.json()
+            domain = data.get("domain")
+            service = data.get("service")
+            service_data = data.get("service_data", {})
+            target = data.get("target", {})
 
-        entity_id = body.get("entity_id")
-        service = body.get("service")
-        data = body.get("data", {})
-        if not entity_id or not service:
-            return self.json(
-                {"error": "Fields 'entity_id' and 'service' are required"},
-                status=400,
-            )
-        if "." not in entity_id:
-            return self.json(
-                {"error": "Invalid entity_id format. Expected 'domain.object'"},
-                status=400,
-            )
+            if not domain or not service:
+                return self.json({"status": "error", "message": "Domain and service are required"}, status_code=400)
 
-        domain = entity_id.split(".")[0]
-        payload = {"entity_id": entity_id}
-        if isinstance(data, dict):
-            payload.update(data)
-        else:
-            return self.json({"error": "'data' must be an object"}, status=400)
-        try:
-            await self.hass.services.async_call(
-                domain, service, payload, blocking=True
-            )
-        except HomeAssistantError as err:
-            _LOGGER.error("Service call failed: %s", err)
-            return self.json(
-                {"error": f"Service call failed: {str(err)}"},
-                status=500,
-            )
-        except Exception as err:
-            _LOGGER.error("Unexpected error in execute_action: %s", err)
-            return self.json(
-                {"error": "Unexpected internal error", "details": str(err)},
-                status=500,
-            )
-        return self.json(
-            {
-                "status": "ok",
-                "executed": {
-                    "domain": domain,
-                    "service": service,
-                    "entity_id": entity_id,
-                }
-            }
-        )
+            await self.hass.services.async_call(domain, service, service_data, blocking=True, target=target)
+
+            _LOGGER.info(f"Successfully executed action: {domain}.{service}")
+            return self.json({"status": "ok", "message": f"Executed {domain}.{service}"})
+
+        except json.JSONDecodeError:
+            _LOGGER.error("Invalid JSON data received")
+            return self.json({"status": "error", "message": "Invalid JSON data"}, status_code=400)
+
+        except Exception as e:
+            _LOGGER.error(f"Error executing action: {e}")
+            return self.json({"status": "error", "message": str(e)}, status_code=500)
 
