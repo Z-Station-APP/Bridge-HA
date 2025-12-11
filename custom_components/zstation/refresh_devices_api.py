@@ -1,78 +1,67 @@
+import logging
 from homeassistant.components.http import HomeAssistantView
-from homeassistant.helpers.entity_registry import async_get as get_entity_registry
-from homeassistant.helpers.device_registry import async_get as get_device_registry
+from homeassistant.helpers import entity_registry as er, device_registry as dr, area_registry as ar
 
-def name_to_ascii_numeric(name: str) -> int:
-    return int("".join(str(ord(c)) for c in name))
+_LOGGER = logging.getLogger(__name__)
 
-ACTIONABLE_MAP = {
-    "light": ["brightness", "color_temp", "hs_color", "rgb_color", "xy_color"],
-    "cover": ["current_position", "position", "tilt_position"],
-    "fan": ["percentage", "speed", "preset_mode"],
-    "climate": [
-        "temperature", "target_temp_low", "target_temp_high",
-        "hvac_mode", "fan_mode", "swing_mode", "preset_mode"
-    ],
-    "media_player": ["volume_level", "is_volume_muted", "source", "sound_mode"],
-    "humidifier": ["humidity", "mode"],
-}
-
-ACTIONABLE_DOMAINS = list(ACTIONABLE_MAP.keys())
-
-
-def extract_action_values(domain, attributes):
-    """Return only actionable attributes for the domain."""
-    if domain not in ACTIONABLE_MAP:
-        return None
-    keys = ACTIONABLE_MAP[domain]
-    action = {k: attributes[k] for k in keys if k in attributes}
-    return action or None
-
+def name_to_ascii_numeric(name: str) -> str:
+    return "".join(str(ord(c)) for c in name)
 
 class ZStationRefreshDevicesView(HomeAssistantView):
-    url = "/api/zstation/refresh_devices"
-    name = "api:zstation:refresh_devices"
+    url = "/api/zstation/refresh_device"
+    name = "api:zstation:refresh_device"
     requires_auth = True
 
     def __init__(self, hass):
         self.hass = hass
 
     async def get(self, request):
-        hass = self.hass
-        ent_reg = get_entity_registry(hass)
-        dev_reg = get_device_registry(hass)
-        area_reg = hass.helpers.area_registry.async_get_registry()
+        _LOGGER.info("Receiving Refresh device for Z-Station")
+        try:
+            entity_registry = er.async_get(self.hass)
+            device_registry = dr.async_get(self.hass)
+            excluded_domains = ["update", "todo", "tts", "event", "person", "device_tracker"]
+            result = {}
 
-        result = {}
+            for entity_id, entity_entry in entity_registry.entities.items():
+                domain = entity_id.split(".")[0]
+                if domain in excluded_domains:
+                    continue
 
-        for entity_id, entity_entry in ent_reg.entities.items():
-            state = hass.states.get(entity_id)
-            if state is None:
-                continue
+                state = self.hass.states.get(entity_id)
+                if state is None or state.state is None:
+                    continue
 
-            domain = entity_id.split(".")[0]
-            result.setdefault(domain, [])
+                attributes = dict(state.attributes)
+                name = state.name
+                value = state.state
+                subtype = attributes.get("device_class", domain)
 
-            attributes = state.attributes
-            action_values = extract_action_values(domain, attributes)
-            zone_name = None
-            zone_id = None
+                if not entity_entry.device_id:
+                    continue
 
-            device = dev_reg.devices.get(entity_entry.device_id)
-            if device and device.area_id:
-                area = area_reg.async_get_area(device.area_id)
-                if area:
-                    zone_name = area.name
-                    zone_id = name_to_ascii_numeric(area.name)
-            result[domain].append({
-                "entity_id": entity_id,
-                "domain": domain,
-                "value": state.state,
-                "attributes": attributes,
-                "action_values": action_values,
-                "zone": zone_name,
-                "zone_id": zone_id
-            })
+                device = device_registry.devices.get(entity_entry.device_id)
+                if not device:
+                    continue
 
-        return self.json(result)
+                device_id = device.id
+                if device_id not in result:
+                    result[device_id] = {
+                        "channels": {}
+                    }
+
+                channel_key = f"{subtype}"
+                result[device_id]["channels"][channel_key] = {
+                    "id": device_id,
+                    "subtype": subtype,
+                    "value": value
+                }
+
+            _LOGGER.info("Successfully Refresh by API for Z-Station")
+            return self.json(result)
+
+        except Exception as e:
+            _LOGGER.error(f"Error fetching devices: {e}", exc_info=True)
+            response = {"status": "error", "message": str(e)}
+            return self.json(response, status_code=500)esult)
 
