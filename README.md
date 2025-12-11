@@ -1,4 +1,4 @@
-# Integration HACS — Z-Station JSON Bridge
+# Integration HACS — Z-Station Bridge
 
 ![Home Assistant](https://img.shields.io/badge/Home%20Assistant-Custom%20Integration-blue)
 ![HACS](https://img.shields.io/badge/HACS-Custom-red)
