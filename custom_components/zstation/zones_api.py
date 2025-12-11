@@ -16,7 +16,7 @@ class ZStationZonesView(HomeAssistantView):
         self.hass = hass
 
     async def get(self, request):
-        _LOGGER.info("Receiving request to /api/zstation/getzone")
+        _LOGGER.info("Receiving Get Zone by Z-Station")
         try:
             area_registry = ar.async_get(self.hass)
             zones = []
