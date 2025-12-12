@@ -10,7 +10,9 @@ It generates structured JSON outputs for API requests used by Z-Station.
 
 ## 📦 Installation via HACS
 
-### 1️⃣ Add the repository to HACS
+[![Open your Home Assistant instance and install Z-Station via HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=Z-Station-APP&repository=Bridge-HA&category=integration)
+
+### 1️⃣ Or Add the repository to HACS
 
 1. Go to **HACS → Integrations**
 2. Click on **⋮ → Custom repositories**
